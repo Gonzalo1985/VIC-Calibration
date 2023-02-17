@@ -70,7 +70,7 @@ sed -i "163s#.*#${line}#" ${path_control_vic}${control_file_VIC}
 line="VEGPARAM          ${path_control_vic}vegetacion_lpb.prn"
 sed -i "164s#.*#${line}#" ${path_control_vic}${control_file_VIC}
 
-line="RESULT_DIR      ${path_out_vic}    # Results directory path"
+line="RESULT_DIR      ${path_out_vic}"
 sed -i "187s#.*#${line}#" ${path_control_vic}${control_file_VIC}
 # -----------------------------------------------------------------
 
@@ -197,7 +197,7 @@ rm ${path_files}${archivo_suelo_aux}
 cd ${path_files}
 rm *4.uh_s
 
-${path_route}rout ${control_file_route} >> ${path_ppal}LOG4.txt
+${path_route}rout ${path_control_rout}${control_file_route} >> ${path_ppal}LOG4.txt
 
 cd ${path_ppal}
 
@@ -236,7 +236,7 @@ salida.NS   <- '${salida_NS}'
 #
 # ------------------------------------------------------------------
 # --- SE LEEN LOS DATOS OBSERVADOS DE CAUDAL Y SE CARGAN EN obs ----
-obs.hist <- read.csv(paste0(path.Q.hist,'1990-2022_puertos_uruguay_conBrasil.csv'), header = TRUE)
+obs.hist <- read.csv(paste0(path.Q.hist,'1990-2022_puertos_uruguay_conBrasil.csv'), stringsAsFactors = FALSE, header = TRUE)
 
 #obs.real <- read.csv(paste0(path.Q.real, 'Q_puertos_uruguay.csv'), header = TRUE)
 #obs.real <- data.frame(fechas = obs.real[, 'X'], 
@@ -319,7 +319,7 @@ RMSE.IRAI <- hydroGOF::rmse(mod.TOTAL[, 'IRAI'], obs.TOTAL[, 'IRAI'], na.rm = TR
 RMSE.SOBER <- hydroGOF::rmse(mod.TOTAL[, 'SOBER'], obs.TOTAL[, 'SOBER'], na.rm = TRUE)
 RMSE.GARRU <- hydroGOF::rmse(mod.TOTAL[, 'GARRU'], obs.TOTAL[, 'GARRU'], na.rm = TRUE)
 RMSE.PASOL <- hydroGOF::rmse(mod.TOTAL[, 'PASOL'], obs.TOTAL[, 'PASOL'], na.rm = TRUE)
-RMSE.CONCO <- hydroGOF::rmse(mod.TOTAL[, 'CONCO'], obs.TOTAL[, 'CONCO'], na.rm = TRUE)
+RMSE.CONCO <- hydroGOF::rmse(mod.TOTAL[, 'CONCO'], as.numeric(obs.TOTAL[, 'CONCO']), na.rm = TRUE)
 
 NS.PELOT <- hydroGOF::NSE(mod.TOTAL[, 'PELOT'], obs.TOTAL[, 'PELOT'], na.rm = TRUE)
 NS.CANOA <- hydroGOF::NSE(mod.TOTAL[, 'CANOA'], obs.TOTAL[, 'CANOA'], na.rm = TRUE)
@@ -327,7 +327,7 @@ NS.IRAI <- hydroGOF::NSE(mod.TOTAL[, 'IRAI'], obs.TOTAL[, 'IRAI'], na.rm = TRUE)
 NS.SOBER <- hydroGOF::NSE(mod.TOTAL[, 'SOBER'], obs.TOTAL[, 'SOBER'], na.rm = TRUE)
 NS.GARRU <- hydroGOF::NSE(mod.TOTAL[, 'GARRU'], obs.TOTAL[, 'GARRU'], na.rm = TRUE)
 NS.PASOL <- hydroGOF::NSE(mod.TOTAL[, 'PASOL'], obs.TOTAL[, 'PASOL'], na.rm = TRUE)
-NS.CONCO <- hydroGOF::NSE(mod.TOTAL[, 'CONCO'], obs.TOTAL[, 'CONCO'], na.rm = TRUE)
+NS.CONCO <- hydroGOF::NSE(mod.TOTAL[, 'CONCO'], as.numeric(obs.TOTAL[, 'CONCO']), na.rm = TRUE)
 # ------------------------------------------------------------------
 
 # ------------------------------------------------------------------

@@ -70,7 +70,7 @@ sed -i "163s#.*#${line}#" ${path_control_vic}${control_file_VIC}
 line="VEGPARAM          ${path_control_vic}vegetacion_lpb.prn"
 sed -i "164s#.*#${line}#" ${path_control_vic}${control_file_VIC}
 
-line="RESULT_DIR      ${path_out_vic}    # Results directory path"
+line="RESULT_DIR      ${path_out_vic}"
 sed -i "187s#.*#${line}#" ${path_control_vic}${control_file_VIC}
 # -----------------------------------------------------------------
 
@@ -97,10 +97,10 @@ line="${path_control_rout}uh_all"
 sed -i "27s#.*#${line}#" ${path_control_rout}${control_file_route}
 # -----------------------------------------------------------------
 
-for combinacion in {1..4}-{7..7}-{1..6}-{1..1}-{1..7}-{1..5}-{1..5}
+for combinacion in {1..4}-{9..9}-{1..6}-{1..1}-{1..7}-{1..5}-{1..5}
 do
-rm ${path_ppal}parametros-cal7.R
-rm ${path_ppal}estadisticos-cal7.R
+rm ${path_ppal}parametros-cal9.R
+rm ${path_ppal}estadisticos-cal9.R
 
 echo ${combinacion}
 cal_param_1=$(echo "$combinacion" | cut --delimiter='-' --fields=1)
@@ -112,7 +112,7 @@ cal_param_6=$(echo "$combinacion" | cut --delimiter='-' --fields=6)
 cal_param_7=$(echo "$combinacion" | cut --delimiter='-' --fields=7)
 
 cd ${path_ppal}
-echo ${cal_param_1} ${cal_param_2} ${cal_param_3} ${cal_param_4} ${cal_param_5} ${cal_param_6} ${cal_param_7} >> ${path_ppal}LOG7.txt
+echo ${cal_param_1} ${cal_param_2} ${cal_param_3} ${cal_param_4} ${cal_param_5} ${cal_param_6} ${cal_param_7} >> ${path_ppal}LOG9.txt
 
 ##################### Script 1 de R  ##############################
 echo "#
@@ -185,19 +185,19 @@ write.table(soil_file,paste0(path.salida,salida,as.character(${cal_param_1}),'-'
 
 ###########################################################################
 ############################ FINALIZADO ###################################
-###########################################################################" >> ${path_ppal}parametros-cal7.R
+###########################################################################" >> ${path_ppal}parametros-cal9.R
 ################################################################################################
 
-Rscript ${path_ppal}'parametros-cal7.R' >> ${path_ppal}LOG7.txt
+Rscript ${path_ppal}'parametros-cal9.R' >> ${path_ppal}LOG9.txt
 cp ${path_files}${archivo_suelo_salida}${cal_param_1}'-'${cal_param_2}'-'${cal_param_3}'-'${cal_param_4}'-'${cal_param_5}'-'${cal_param_6}'-'${cal_param_7}'.prn' ${path_files}${archivo_suelo_aux}
 
 ${path_VIC}vicNl -g ${path_files}${control_file_VIC}
 rm ${path_files}${archivo_suelo_aux}
 
 cd ${path_files}
-rm *7.uh_s
+rm *9.uh_s
 
-${path_route}rout ${control_file_route} >> ${path_ppal}LOG7.txt
+${path_route}rout ${path_control_rout}${control_file_route} >> ${path_ppal}LOG9.txt
 
 cd ${path_ppal}
 
@@ -236,7 +236,7 @@ salida.NS   <- '${salida_NS}'
 #
 # ------------------------------------------------------------------
 # --- SE LEEN LOS DATOS OBSERVADOS DE CAUDAL Y SE CARGAN EN obs ----
-obs.hist <- read.csv(paste0(path.Q.hist,'1990-2022_puertos_uruguay_conBrasil.csv'), header = TRUE)
+obs.hist <- read.csv(paste0(path.Q.hist,'1990-2022_puertos_uruguay_conBrasil.csv'), stringsAsFactors = FALSE, header = TRUE)
 
 #obs.real <- read.csv(paste0(path.Q.real, 'Q_puertos_uruguay.csv'), header = TRUE)
 #obs.real <- data.frame(fechas = obs.real[, 'X'], 
@@ -251,13 +251,13 @@ obs <- obs.hist
 
 # ------------------------------------------------------------------------------------------
 # ----- SE LEE LA SALIDA DEL MODELO, SE TRANSFORMA LA UNIDAD Y SE AGREGA COLUMNA DATE ------
-mod.PELOT <- read.table(paste0(path.modelo, 'PELO7.day'), header = FALSE)
-mod.CANOA <- read.table(paste0(path.modelo, 'CANO7.day'), header = FALSE)
-mod.IRAI <- read.table(paste0(path.modelo, 'IRAI7.day'), header = FALSE)
-mod.SOBER <- read.table(paste0(path.modelo, 'SOBE7.day'), header = FALSE)
-mod.GARRU <- read.table(paste0(path.modelo, 'GARR7.day'), header = FALSE)
-mod.PASOL <- read.table(paste0(path.modelo, 'PASO7.day'), header = FALSE)
-mod.CONCO <- read.table(paste0(path.modelo, 'CONC7.day'), header = FALSE)
+mod.PELOT <- read.table(paste0(path.modelo, 'PELO9.day'), header = FALSE)
+mod.CANOA <- read.table(paste0(path.modelo, 'CANO9.day'), header = FALSE)
+mod.IRAI <- read.table(paste0(path.modelo, 'IRAI9.day'), header = FALSE)
+mod.SOBER <- read.table(paste0(path.modelo, 'SOBE9.day'), header = FALSE)
+mod.GARRU <- read.table(paste0(path.modelo, 'GARR9.day'), header = FALSE)
+mod.PASOL <- read.table(paste0(path.modelo, 'PASO9.day'), header = FALSE)
+mod.CONCO <- read.table(paste0(path.modelo, 'CONC9.day'), header = FALSE)
 
 mod.PELOT <- transform(mod.PELOT, Q.m3.seg = V4 / 35.3)
 mod.CANOA <- transform(mod.CANOA, Q.m3.seg = V4 / 35.3)
@@ -319,7 +319,7 @@ RMSE.IRAI <- hydroGOF::rmse(mod.TOTAL[, 'IRAI'], obs.TOTAL[, 'IRAI'], na.rm = TR
 RMSE.SOBER <- hydroGOF::rmse(mod.TOTAL[, 'SOBER'], obs.TOTAL[, 'SOBER'], na.rm = TRUE)
 RMSE.GARRU <- hydroGOF::rmse(mod.TOTAL[, 'GARRU'], obs.TOTAL[, 'GARRU'], na.rm = TRUE)
 RMSE.PASOL <- hydroGOF::rmse(mod.TOTAL[, 'PASOL'], obs.TOTAL[, 'PASOL'], na.rm = TRUE)
-RMSE.CONCO <- hydroGOF::rmse(mod.TOTAL[, 'CONCO'], obs.TOTAL[, 'CONCO'], na.rm = TRUE)
+RMSE.CONCO <- hydroGOF::rmse(mod.TOTAL[, 'CONCO'], as.numeric(obs.TOTAL[, 'CONCO']), na.rm = TRUE)
 
 NS.PELOT <- hydroGOF::NSE(mod.TOTAL[, 'PELOT'], obs.TOTAL[, 'PELOT'], na.rm = TRUE)
 NS.CANOA <- hydroGOF::NSE(mod.TOTAL[, 'CANOA'], obs.TOTAL[, 'CANOA'], na.rm = TRUE)
@@ -327,7 +327,7 @@ NS.IRAI <- hydroGOF::NSE(mod.TOTAL[, 'IRAI'], obs.TOTAL[, 'IRAI'], na.rm = TRUE)
 NS.SOBER <- hydroGOF::NSE(mod.TOTAL[, 'SOBER'], obs.TOTAL[, 'SOBER'], na.rm = TRUE)
 NS.GARRU <- hydroGOF::NSE(mod.TOTAL[, 'GARRU'], obs.TOTAL[, 'GARRU'], na.rm = TRUE)
 NS.PASOL <- hydroGOF::NSE(mod.TOTAL[, 'PASOL'], obs.TOTAL[, 'PASOL'], na.rm = TRUE)
-NS.CONCO <- hydroGOF::NSE(mod.TOTAL[, 'CONCO'], obs.TOTAL[, 'CONCO'], na.rm = TRUE)
+NS.CONCO <- hydroGOF::NSE(mod.TOTAL[, 'CONCO'], as.numeric(obs.TOTAL[, 'CONCO']), na.rm = TRUE)
 # ------------------------------------------------------------------
 
 # ------------------------------------------------------------------
@@ -356,11 +356,11 @@ write.table(t(c(${cal_param_1}, ${cal_param_2}, ${cal_param_3}, ${cal_param_4}, 
 
 ###########################################################################
 ############################ FINALIZADO ###################################
-###########################################################################" >> ${path_ppal}estadisticos-cal7.R
+###########################################################################" >> ${path_ppal}estadisticos-cal9.R
 
 ###################################################################################################
 
-Rscript ${path_ppal}'estadisticos-cal7.R' >> ${path_ppal}LOG7.txt
+Rscript ${path_ppal}'estadisticos-cal9.R' >> ${path_ppal}LOG9.txt
 
 done
 
